@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Hayati',
   webDir: 'out',
   server: {
-    url: 'https://hayati-app.vercel.app', // Ganti dengan URL Vercel aslimu bang
+    url: 'https://agenhayati.vercel.app',
     cleartext: true
   }
 };
