@@ -6,8 +6,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { createTransaction } from '@/app/actions/finance'
 import { useRouter } from 'next/navigation'
-import { Trash2, Plus, ArrowLeft, CheckCircle2, Minus, ShoppingBag } from 'lucide-react'
+import { Trash2, Plus, ArrowLeft, CheckCircle2, Minus, ShoppingBag, Download } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 export default function CashierForm({ customers, products }: { customers: any[], products: any[] }) {
   const router = useRouter()
@@ -16,6 +18,7 @@ export default function CashierForm({ customers, products }: { customers: any[],
   const [cart, setCart] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [lastTransaction, setLastTransaction] = useState<any>(null)
 
   useEffect(() => {
     if (selectedCustomerId) {
@@ -41,14 +44,78 @@ export default function CashierForm({ customers, products }: { customers: any[],
 
   const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
 
+  const generatePDF = (transaction: any) => {
+    if (!transaction) return
+    const doc = new jsPDF()
+    const customer = customers.find(c => c.id === selectedCustomerId)
+    
+    // Header Luxury Style
+    doc.setFillColor(18, 18, 18)
+    doc.rect(0, 0, 210, 40, 'F')
+    
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(24)
+    doc.setFont('helvetica', 'bold')
+    doc.text('HAYATI AGEN', 14, 25)
+    
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text('ELITE AGENCY TERMINAL v3.2', 14, 32)
+    
+    // Invoice Info
+    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(10)
+    doc.text(`NOTA ID: #${transaction.id.slice(0, 8).toUpperCase()}`, 14, 55)
+    doc.text(`TANGGAL: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`, 14, 61)
+    doc.text(`PELANGGAN: ${customer?.name || 'UMUM'} (${customer?.uid || '-'})`, 14, 67)
+
+    // Table
+    const tableData = cart.map((item, idx) => [
+      idx + 1,
+      item.productName,
+      `${item.quantity} UNIT`,
+      `Rp ${item.price.toLocaleString('id-ID')}`,
+      `Rp ${(item.price * item.quantity).toLocaleString('id-ID')}`
+    ])
+
+    autoTable(doc, {
+      startY: 75,
+      head: [['NO', 'PRODUK', 'QTY', 'HARGA', 'SUBTOTAL']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [18, 18, 18], fontStyle: 'bold', halign: 'center' },
+      columnStyles: {
+        0: { halign: 'center' },
+        2: { halign: 'center' },
+        3: { halign: 'right' },
+        4: { halign: 'right' },
+      }
+    })
+
+    // Summary
+    const finalY = (doc as any).lastAutoTable.finalY + 15
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text('TOTAL PEMBAYARAN:', 120, finalY)
+    doc.text(`Rp ${total.toLocaleString('id-ID')}`, 200, finalY, { align: 'right' })
+    
+    // Footer
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'italic')
+    doc.setTextColor(150, 150, 150)
+    doc.text('Dokumen ini sah dan diterbitkan secara digital oleh Sistem Hayati.', 105, finalY + 30, { align: 'center' })
+
+    doc.save(`NOTA-HAYATI-${transaction.id.slice(0, 8)}.pdf`)
+  }
+
   const handleSubmit = async () => {
     if (!selectedCustomerId || cart.length === 0) return
     for (const item of cart) { if (item.quantity > item.stock) { alert(`Stok ${item.productName} habis!`); return } }
     setLoading(true)
     try {
-      await createTransaction(selectedCustomerId, cart.map(item => ({ productId: item.productId, quantity: item.quantity })))
+      const res = await createTransaction(selectedCustomerId, cart.map(item => ({ productId: item.productId, quantity: item.quantity })))
+      setLastTransaction(res)
       setSuccess(true)
-      setTimeout(() => { router.push('/customers'); router.refresh() }, 1500)
     } catch (e) { alert('Gagal simpan') } finally { setLoading(false) }
   }
 
@@ -60,8 +127,18 @@ export default function CashierForm({ customers, products }: { customers: any[],
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-32 h-32 bg-emerald-50 text-emerald-500 rounded-[3rem] flex items-center justify-center mb-8 shadow-xl">
           <CheckCircle2 className="w-16 h-16" />
         </motion.div>
-        <h2 className="text-4xl font-[950] text-black tracking-tighter italic">Nota Berhasil!</h2>
-        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] mt-4 text-[10px]">Stok Terpotong Real-time</p>
+        <h2 className="text-4xl font-[950] text-black tracking-tighter italic text-center">Nota Berhasil!</h2>
+        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] mt-4 text-[10px] text-center">Stok Terpotong Real-time</p>
+        
+        <div className="flex flex-col w-full gap-3 mt-12 max-w-[320px]">
+          <Button variant="gold" effect="shimmer" size="xl" className="w-full rounded-2xl gap-3" onClick={() => generatePDF(lastTransaction)}>
+             <Download className="w-5 h-5" />
+             DOWNLOAD NOTA (PDF)
+          </Button>
+          <Button variant="outline" size="xl" className="w-full rounded-2xl" onClick={() => { router.push('/customers'); router.refresh() }}>
+             KEMBALI KE AGEN
+          </Button>
+        </div>
       </div>
     )
   }
