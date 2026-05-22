@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Customer {
+  id           String           @id @default(uuid())
+  uid          String           @unique
+  name         String
+  phone        String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  customPrices CustomerPrice[]
+  payments     PaymentHistory[]
+  transactions Transaction[]
+}
+
+model Product {
+  id           String          @id @default(uuid())
+  name         String          @unique
+  baseCost     Float           // Modal per barang
+  stock        Int             @default(0) // Tambahan field stok
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  customPrices CustomerPrice[]
+  items        TransactionItem[]
+}
+
+model CustomerPrice {
+  id           String   @id @default(uuid())
+  customerId   String
+  productId    String
+  sellingPrice Float
+  product      Product  @relation(fields: [productId], references: [id])
+  customer     Customer @relation(fields: [customerId], references: [id])
+
+  @@unique([customerId, productId])
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  customerId      String
+  totalReceivable Float
+  totalCogs       Float
+  createdAt       DateTime          @default(now())
+  customer        Customer          @relation(fields: [customerId], references: [id])
+  items           TransactionItem[]
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  transactionId String
+  productId     String
+  quantity      Int
+  pricePerUnit  Float
+  costPerUnit   Float
+  product       Product     @relation(fields: [productId], references: [id])
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+}
+
+model PaymentHistory {
+  id            String   @id @default(uuid())
+  customerId    String
+  amount        Float
+  paymentMethod String   @default("CASH")
+  createdAt     DateTime @default(now())
+  customer      Customer @relation(fields: [customerId], references: [id])
+}
