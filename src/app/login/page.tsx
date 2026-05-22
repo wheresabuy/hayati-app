@@ -5,9 +5,9 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Lock, ArrowRight, ShieldCheck, UserCircle2 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Input, PasswordInput } from '@/components/ui/input'
+import { ArrowRight, Fingerprint, ShieldCheck, UserCircle2, Sparkles, Globe } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,82 +42,127 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-slate-50">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden bg-[#0A0A0B]">
+      {/* Dynamic Background Elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[400px] space-y-8"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+        className="relative z-10 w-full max-w-[420px]"
       >
-        <div className="text-center space-y-2">
-          <div className="w-16 h-16 bg-primary rounded-[2rem] shadow-xl shadow-primary/20 flex items-center justify-center text-white mx-auto mb-6">
-            <Lock className="h-8 w-8" />
-          </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight text-center">Hayati Agen</h1>
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest text-center">
-            Login Sesuai Akun Anda
+        <div className="text-center mb-10 space-y-4">
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-4"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Hayati Enterprise</span>
+          </motion.div>
+          
+          <h1 className="text-6xl font-[1000] text-white tracking-tighter leading-none italic">
+            Welcome.
+          </h1>
+          <p className="text-xs font-bold text-white/30 uppercase tracking-[0.4em]">
+            Elite Agency Terminal v3.2
           </p>
         </div>
 
-        <Card className="border-none bg-white rounded-[2.5rem] shadow-premium overflow-hidden">
-          <CardContent className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nama Anda</label>
-                  <div className="relative group">
-                    <Input
-                      placeholder="Masukkan nama..."
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="h-14 pl-12 rounded-2xl border-none bg-slate-50 font-bold text-slate-700 focus-visible:ring-primary/20 transition-all"
-                      required
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors">
-                      <UserCircle2 className="h-5 w-5" />
-                    </div>
-                  </div>
+        <Card variant="darkGlass" padding="none" className="rounded-[3rem] border-white/5 shadow-2xl backdrop-blur-3xl overflow-hidden">
+          <CardContent className="p-10">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2">Access Identity</label>
+                  <Input
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    variant="dark"
+                    size="xl"
+                    className="bg-white/5 border-white/5 text-white placeholder:text-white/10 h-16 rounded-[1.5rem] px-8"
+                    icon={<UserCircle2 className="h-5 w-5 text-white/20" />}
+                    required
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Password</label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      placeholder="Masukkan password..."
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-14 pl-12 rounded-2xl border-none bg-slate-50 font-bold text-slate-700 focus-visible:ring-primary/20 transition-all"
-                      required
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors">
-                      <ShieldCheck className="h-5 w-5" />
-                    </div>
-                  </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2">Security Key</label>
+                  <PasswordInput
+                    placeholder="Enter security key"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    variant="dark"
+                    size="xl"
+                    className="bg-white/5 border-white/5 text-white placeholder:text-white/10 h-16 rounded-[1.5rem] px-8"
+                    icon={<Fingerprint className="h-5 w-5 text-white/20" />}
+                    required
+                  />
                 </div>
 
-                {error && (
-                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] font-bold text-rose-500 uppercase tracking-wider ml-1 text-center">
-                    Nama atau Password salah Bang!
-                  </motion.p>
-                )}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div 
+                      initial={{ opacity: 0, x: -10 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-2xl flex items-center gap-3"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-rose-500" />
+                      <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">
+                        Identity rejected. Check credentials.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black text-lg shadow-xl shadow-primary/20 group transition-all"
-              >
-                {loading ? 'MENGECEK...' : (
-                  <span className="flex items-center gap-2">
-                    MASUK
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                )}
-              </Button>
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  variant="gold"
+                  effect="shimmer"
+                  size="xl"
+                  className="w-full h-20 rounded-[2rem] font-[1000] text-xl tracking-tighter shadow-[0_20px_50px_-10px_rgba(234,179,8,0.3)] active:scale-95 transition-all"
+                >
+                  {loading ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
+                       <Globe className="w-6 h-6" />
+                    </motion.div>
+                  ) : (
+                    <span className="flex items-center gap-3">
+                      AUTHORIZE ACCESS
+                      <ArrowRight className="h-6 w-6 stroke-[3]" />
+                    </span>
+                  )}
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>
+        
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="mt-12 text-center"
+        >
+          <p className="text-[9px] font-black text-white/10 uppercase tracking-[0.5em]">
+            Secure Cloud Encryption Active • Hayati Protocol 2026
+          </p>
+        </motion.div>
       </motion.div>
+
+      {/* Decorative Bottom Glow */}
+      <div className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/20 rounded-full blur-[150px] pointer-events-none" />
     </div>
   )
 }
