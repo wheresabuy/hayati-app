@@ -241,16 +241,14 @@ export default function LoginPage() {
     setError(null)
     
     try {
-      // Map 'Ayub' style username to email for the backend if necessary, 
-      // or assume the backend handles it.
       const response = await signIn('credentials', {
-        email: formData.username.includes('@') ? formData.username : `${formData.username}@hayati.app`,
+        username: formData.username.trim(),
         password: formData.password,
         redirect: false
       })
 
       if (response?.error) {
-        setError('Otentikasi gagal.')
+        setError('Otentikasi gagal. Cek kembali nama/sandi.')
         setIsLoading(false)
       } else {
         router.push('/')
