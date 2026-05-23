@@ -10,26 +10,26 @@
 }
 
 :root {
-  /* VIBRANT BUSINESS PRESTIGE PALETTE */
+  /* GEOMETRIC POPPINS HARMONY PALETTE */
   --background: #FFFDF9; /* Immaculate Soft Ivory / Warm Cream */
   --foreground: #1A1D1E; /* Solid Deep Charcoal Typography */
   
   --card: #FFFFFF;
   --card-foreground: #1A1D1E;
   
-  --primary: #2D5BFF; /* Vivid Royal Blue - Primary Navigation */
+  --primary: #2D5BFF; /* Vibrant Royal Blue */
   --primary-foreground: #FFFFFF;
   
-  --secondary: #F8F9FA; /* Light Studio Surface */
+  --secondary: #F8F9FA; /* Ultra-Light Studio Gray */
   --secondary-foreground: #1A1D1E;
   
-  --positive: #10B981; /* Energetic Emerald Green - Growth */
-  --urgent: #FF6B00;   /* Cheerful Electric Orange - Action/CTA */
+  --positive: #10B981; /* Energetic Emerald Green */
+  --urgent: #FF6B00;   /* Vivid Electric Orange */
   
-  --muted: #6B7280; /* Neutral Gray for secondary info */
-  --border: #F3F4F6;
+  --muted: #6B7280;
+  --border: #F1F3F5;
   
-  /* SQUIRCLE GEOMETRY */
+  /* GEOMETRIC SQUIRCLE RADIUS */
   --radius: 2rem; 
 }
 
@@ -38,7 +38,7 @@ html, body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   min-height: 100%;
   margin: 0;
   padding: 0;
@@ -61,72 +61,76 @@ main {
   padding-bottom: 120px;
 }
 
-/* VIBRANT STYLING & AMBIENT SHADOWS */
+/* GEOMETRIC DEPTH & SHADOWS */
 .shadow-ambient {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
-.shadow-vibrant {
-  box-shadow: 0 20px 50px -12px rgba(45, 91, 255, 0.12);
+.shadow-geometric {
+  box-shadow: 0 20px 40px -12px rgba(45, 91, 255, 0.1);
 }
 
 .shadow-orange-glow {
-  box-shadow: 0 15px 35px -5px rgba(255, 107, 0, 0.25);
+  box-shadow: 0 12px 30px -4px rgba(255, 107, 0, 0.2);
 }
 
-/* DYNAMIC WIDGETS & SQUIRCLES */
+/* SQUIRCLE CONTAINERS */
 .squircle {
   border-radius: 2.25rem;
-  /* Masking for actual squircle math if needed in future, but high-radius is approachable now */
 }
 
-/* MICRO-INTERACTION: BOUNCING BADGE */
-@keyframes badge-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-.animate-badge {
-  animation: badge-bounce 2s infinite ease-in-out;
+/* INTERACTIVE BOUNDARIES */
+.btn-stroke {
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
 }
 
-/* REFINED CLAYMORPHISM CTA (VIBRANT) */
-.clay-cta {
+/* MICRO-INTERACTION: SMOOTH BADGE ENTRY */
+@keyframes badge-entry {
+  from { opacity: 0; transform: scale(0.5) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-badge-in {
+  animation: badge-entry 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* VIBRANT GEOMETRIC CTA */
+.geometric-cta {
   background-color: var(--urgent);
   box-shadow: 
-    0 12px 30px -8px rgba(255, 107, 0, 0.4),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  color: white;
-  font-weight: 800;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    0 10px 25px -5px rgba(255, 107, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.clay-cta:hover {
-  transform: translateY(-2px) scale(1.02);
+.geometric-cta:hover {
+  transform: translateY(-2px);
   box-shadow: 
-    0 20px 40px -10px rgba(255, 107, 0, 0.5),
-    inset 0 3px 6px rgba(255, 255, 255, 0.4);
+    0 15px 35px -5px rgba(255, 107, 0, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
 }
 
-.clay-cta:active {
-  transform: scale(0.96);
+.geometric-cta:active {
+  transform: translateY(1px) scale(0.98);
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection {
-  background: rgba(45, 91, 255, 0.1);
+  background: rgba(45, 91, 255, 0.08);
   color: var(--primary);
 }
 
 h1, h2, h3, h4 {
   color: var(--foreground) !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.03em !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
 }
 
-/* Hide scrollbars globally */
+/* 8K-FIDELITY CRISP ALIGNMENT */
 * {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   scrollbar-width: none;
 }
 *::-webkit-scrollbar {

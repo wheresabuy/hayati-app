@@ -23,8 +23,6 @@ export default function LoginPage() {
     setMounted(true)
     document.documentElement.style.backgroundColor = '#FFFDF9'
     document.body.style.backgroundColor = '#FFFDF9'
-    document.documentElement.classList.remove('dark')
-    document.documentElement.classList.add('light')
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,83 +61,83 @@ export default function LoginPage() {
   if (!mounted) return <div className="fixed inset-0 bg-[#FFFDF9]" />
 
   return (
-    <main className="relative min-h-[100dvh] w-full flex items-center justify-center p-8 selection:bg-[#2D5BFF]/10 selection:text-[#2D5BFF] antialiased overflow-hidden">
+    <main className="relative min-h-[100dvh] w-full flex items-center justify-center p-8 selection:bg-[#2D5BFF]/5 selection:text-[#2D5BFF] antialiased overflow-hidden">
       
-      {/* VIBRANT BACKGROUND LAYERS */}
+      {/* 8K-FIDELITY BACKGROUND */}
       <div className="fixed inset-0 bg-[#FFFDF9] -z-[100]" />
       
-      {/* Atmospheric Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#2D5BFF]/5 rounded-full blur-[120px]"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-15%] right-[-15%] w-[70%] h-[70%] bg-[#2D5BFF]/5 rounded-full blur-[140px]"
         />
         <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 12, repeat: Infinity, delay: 2 }}
-          className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#FF6B00]/5 rounded-full blur-[100px]"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#FF6B00]/5 rounded-full blur-[120px]"
         />
       </div>
 
       <div className="w-full max-w-[420px] relative z-10 flex flex-col items-center">
         
-        {/* BRAND IDENTITY: VIBRANT & CLEAN */}
+        {/* BRANDING: GEOMETRIC CONTINUITY */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -25 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-[1.75rem] bg-[#1A1D1E] shadow-vibrant mb-10 group relative">
-            <Flame className="w-10 h-10 text-[#2D5BFF] fill-[#2D5BFF] group-hover:rotate-12 transition-transform duration-500" />
+          <div className="inline-flex items-center justify-center w-22 h-22 squircle bg-[#1A1D1E] shadow-geometric mb-10 relative group">
+            <Flame className="w-11 h-11 text-[#2D5BFF] fill-[#2D5BFF] group-hover:rotate-12 transition-transform duration-500" />
             <motion.div 
-              animate={{ opacity: [0, 1, 0], scale: [1, 1.5, 1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute inset-0 bg-[#2D5BFF]/20 blur-2xl rounded-full"
+              animate={{ opacity: [0, 0.6, 0], scale: [1, 1.4, 1] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="absolute inset-0 bg-[#2D5BFF]/10 blur-3xl rounded-full"
             />
           </div>
-          <h1 className="text-5xl font-[1000] tracking-[-0.04em] text-[#1A1D1E] leading-none uppercase italic">
+          <h1 className="text-5xl font-black tracking-[-0.04em] text-[#1A1D1E] leading-none uppercase italic">
             Hayati<span className="text-[#2D5BFF] not-italic">.</span>
           </h1>
         </motion.div>
 
-        {/* VIBRANT SQUIRCLE FORM */}
+        {/* SQUIRCLE TERMINAL FORM */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, type: 'spring', damping: 20 }}
+          initial={{ opacity: 0, scale: 0.98, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="w-full"
         >
-          <Card className="squircle bg-white border border-slate-50 shadow-vibrant p-12 sm:p-14 relative overflow-hidden group">
+          <Card className="squircle bg-white border border-slate-50 shadow-geometric p-12 sm:p-14 relative overflow-hidden group">
             <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
               
-              <div className="space-y-6">
-                {/* USER FIELD */}
-                <div className="space-y-3">
+              <div className="space-y-8">
+                {/* IDENTITY INPUT */}
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between px-1">
                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Identity</span>
                   </div>
-                  <div className="relative h-18 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50/30 focus-within:bg-white focus-within:border-[#2D5BFF]/20 focus-within:ring-8 focus-within:ring-[#2D5BFF]/[0.02] transition-all duration-500">
+                  <div className="relative h-18 rounded-[1.75rem] bg-[#F8F9FA] btn-stroke focus-within:bg-white focus-within:border-[#2D5BFF]/30 focus-within:ring-8 focus-within:ring-[#2D5BFF]/[0.02] transition-all duration-500">
                     <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                     <input
                       name="username"
                       type="text"
-                      placeholder="Username"
+                      placeholder="User"
                       value={formData.username}
                       onChange={handleInputChange}
                       required
                       autoCapitalize="none"
-                      className="w-full h-full bg-transparent pl-16 pr-6 outline-none text-[#1A1D1E] font-extrabold text-base placeholder:text-slate-200"
+                      className="w-full h-full bg-transparent pl-16 pr-6 outline-none text-[#1A1D1E] font-extrabold text-base tracking-tight placeholder:text-slate-200"
                     />
                   </div>
                 </div>
 
-                {/* PASSWORD FIELD */}
-                <div className="space-y-3">
+                {/* TOKEN INPUT */}
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between px-1">
                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Token</span>
                   </div>
-                  <div className="relative h-18 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50/30 focus-within:bg-white focus-within:border-[#2D5BFF]/20 focus-within:ring-8 focus-within:ring-[#2D5BFF]/[0.02] transition-all duration-500">
+                  <div className="relative h-18 rounded-[1.75rem] bg-[#F8F9FA] btn-stroke focus-within:bg-white focus-within:border-[#2D5BFF]/30 focus-within:ring-8 focus-within:ring-[#2D5BFF]/[0.02] transition-all duration-500">
                     <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                     <input
                       name="password"
@@ -148,7 +146,7 @@ export default function LoginPage() {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
-                      className="w-full h-full bg-transparent pl-16 pr-16 outline-none text-[#1A1D1E] font-extrabold text-base placeholder:text-slate-200"
+                      className="w-full h-full bg-transparent pl-16 pr-16 outline-none text-[#1A1D1E] font-extrabold text-base tracking-tight placeholder:text-slate-200"
                     />
                     <button 
                       type="button"
@@ -161,7 +159,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* ERROR FEEDBACK */}
+              {/* DYNAMIC FEEDBACK */}
               <AnimatePresence>
                 {error && (
                   <motion.div 
@@ -169,53 +167,52 @@ export default function LoginPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="p-5 rounded-2xl bg-[#FF6B00]/5 border border-[#FF6B00]/10 flex items-center gap-4 text-[#FF6B00]"
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#FF6B00]/10 flex items-center justify-center">
-                       <Info className="w-4 h-4" />
-                    </div>
+                    <Info className="w-5 h-5 shrink-0" />
                     <span className="text-[10px] font-black uppercase tracking-widest">{error}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* ACTION: VIBRANT CLAYMORPHISM */}
-              <div className="pt-4">
+              {/* ACTION: GEOMETRIC CLAYMORPHISM */}
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isLoading || !formData.username || !formData.password}
-                  className="clay-cta w-full h-20 rounded-[2rem] text-white flex items-center justify-center gap-5 disabled:opacity-20 active:scale-95 transition-all"
+                  className="geometric-cta w-full h-20 rounded-[2rem] text-white flex items-center justify-center gap-6 disabled:opacity-20 active:scale-95 transition-all shadow-orange-glow"
                 >
                   {isLoading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
                   ) : (
                     <>
-                       <span className="text-[12px] font-black uppercase tracking-[0.5em]">Masuk</span>
-                       <Zap className="w-5 h-5 fill-current" />
+                       <span className="text-[13px] font-black uppercase tracking-[0.5em]">Masuk</span>
+                       <ArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
               </div>
             </form>
-            
-            {/* Subtle Texture Decorator */}
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#2D5BFF]/5 rounded-full blur-3xl pointer-events-none" />
           </Card>
         </motion.div>
 
-        {/* VIBRANT FOOTER */}
+        {/* GEOMETRIC FOOTER */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-20 flex flex-col items-center gap-8 opacity-40 group"
+          transition={{ delay: 0.6 }}
+          className="mt-20 flex flex-col items-center gap-10 opacity-30 hover:opacity-60 transition-opacity"
         >
-           <div className="flex items-center gap-6">
+           <div className="flex items-center gap-8">
               {[Shield, Sparkles, Zap].map((I, i) => (
-                <I key={i} className="w-5 h-5 text-[#1A1D1E] group-hover:text-[#2D5BFF] transition-colors" />
+                <I key={i} className="w-5 h-5 text-[#1A1D1E]" strokeWidth={2.5} />
               ))}
            </div>
-           <div className="space-y-2 text-center">
-              <p className="text-[9px] font-black text-[#1A1D1E] uppercase tracking-[0.6em]">System Matrix v3.2.0</p>
-              <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">© 2026 Hayati Intelligence Terminal</p>
+           <div className="space-y-3 text-center">
+              <p className="text-[10px] font-black text-[#1A1D1E] uppercase tracking-[0.8em]">8K Fidelity Platform</p>
+              <div className="flex items-center justify-center gap-4">
+                 <div className="h-px w-8 bg-[#1A1D1E]/20" />
+                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">© 2026 Hayati Intelligence</p>
+                 <div className="h-px w-8 bg-[#1A1D1E]/20" />
+              </div>
            </div>
         </motion.div>
 
