@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 // =============================================================================
