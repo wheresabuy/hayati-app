@@ -10,7 +10,7 @@ import {
   Layers, Package, ShoppingCart, Settings, LogOut, ChevronDown,
   Globe, Smartphone, Coffee, Star, Heart, Target, Flame,
   Briefcase, BarChart3, PieChart, Info, MapPin, MousePointer2,
-  Trophy, Rocket, ZapOff, Fingerprint, Crown, Diamond
+  Trophy, Rocket, ZapOff, Fingerprint, Crown, Diamond, User
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
