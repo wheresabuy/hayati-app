@@ -10,25 +10,27 @@
 }
 
 :root {
-  /* EXECUTIVE BUSINESS PALETTE */
-  --background: #FDFBF7; /* Soothing Corporate Cream */
-  --foreground: #2C3338; /* Dark Charcoal for high readability */
+  /* VIBRANT BUSINESS PRESTIGE PALETTE */
+  --background: #FFFDF9; /* Immaculate Soft Ivory / Warm Cream */
+  --foreground: #1A1D1E; /* Solid Deep Charcoal Typography */
   
   --card: #FFFFFF;
-  --card-foreground: #2C3338;
+  --card-foreground: #1A1D1E;
   
-  --primary: #6488EA; /* Gentle Dusty Blue */
+  --primary: #2D5BFF; /* Vivid Royal Blue - Primary Navigation */
   --primary-foreground: #FFFFFF;
   
-  --secondary: #F1F5F9; /* Muted Slate-Gray for layout structure */
-  --secondary-foreground: #2C3338;
+  --secondary: #F8F9FA; /* Light Studio Surface */
+  --secondary-foreground: #1A1D1E;
   
-  --positive: #5A8B6B; /* Deep Sage Green for growth metrics */
-  --negative: #D96B6B; /* Muted Rose for alerts/debts */
+  --positive: #10B981; /* Energetic Emerald Green - Growth */
+  --urgent: #FF6B00;   /* Cheerful Electric Orange - Action/CTA */
   
-  --muted: #5C6770; /* Muted Charcoal for secondary text */
-  --border: #E8EBEF;
-  --radius: 1.5rem; /* Precisely rounded corners */
+  --muted: #6B7280; /* Neutral Gray for secondary info */
+  --border: #F3F4F6;
+  
+  /* SQUIRCLE GEOMETRY */
+  --radius: 2rem; 
 }
 
 html, body {
@@ -36,7 +38,7 @@ html, body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   min-height: 100%;
   margin: 0;
   padding: 0;
@@ -59,65 +61,71 @@ main {
   padding-bottom: 120px;
 }
 
-/* EXECUTIVE STYLING & SHADOWS */
-.shadow-subtle {
-  box-shadow: 0 4px 24px -6px rgba(44, 51, 56, 0.05);
+/* VIBRANT STYLING & AMBIENT SHADOWS */
+.shadow-ambient {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
 }
 
-.shadow-executive {
-  box-shadow: 0 12px 40px -8px rgba(44, 51, 56, 0.08);
+.shadow-vibrant {
+  box-shadow: 0 20px 50px -12px rgba(45, 91, 255, 0.12);
 }
 
-.shadow-lux {
-  box-shadow: 0 20px 60px -10px rgba(44, 51, 56, 0.12);
+.shadow-orange-glow {
+  box-shadow: 0 15px 35px -5px rgba(255, 107, 0, 0.25);
 }
 
-/* REFINED CLAYMORPHISM CTA */
-.clay-btn {
-  position: relative;
-  background-color: var(--primary);
+/* DYNAMIC WIDGETS & SQUIRCLES */
+.squircle {
+  border-radius: 2.25rem;
+  /* Masking for actual squircle math if needed in future, but high-radius is approachable now */
+}
+
+/* MICRO-INTERACTION: BOUNCING BADGE */
+@keyframes badge-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-badge {
+  animation: badge-bounce 2s infinite ease-in-out;
+}
+
+/* REFINED CLAYMORPHISM CTA (VIBRANT) */
+.clay-cta {
+  background-color: var(--urgent);
   box-shadow: 
-    0 8px 32px -4px rgba(100, 136, 234, 0.3),
-    inset 0 2px 4px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
+    0 12px 30px -8px rgba(255, 107, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 800;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.clay-btn:hover {
-  transform: translateY(-1px);
+.clay-cta:hover {
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 
-    0 12px 40px -2px rgba(100, 136, 234, 0.4),
-    inset 0 3px 6px 0 rgba(255, 255, 255, 0.3);
+    0 20px 40px -10px rgba(255, 107, 0, 0.5),
+    inset 0 3px 6px rgba(255, 255, 255, 0.4);
 }
 
-.clay-btn:active {
-  transform: translateY(1px);
-  box-shadow: 
-    0 4px 16px -2px rgba(100, 136, 234, 0.2),
-    inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-}
-
-.clay-card {
-  background: white;
-  box-shadow: 
-    0 10px 30px -10px rgba(0, 0, 0, 0.03),
-    inset 0 0 0 1px rgba(255, 255, 255, 1);
-  border: 1px solid #F1F5F9;
+.clay-cta:active {
+  transform: scale(0.96);
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection {
-  background: rgba(100, 136, 234, 0.15);
+  background: rgba(45, 91, 255, 0.1);
   color: var(--primary);
 }
 
 h1, h2, h3, h4 {
   color: var(--foreground) !important;
-  font-weight: 800 !important; /* Professional authority weight */
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
 }
 
-/* Hide scrollbars but keep functionality */
+/* Hide scrollbars globally */
 * {
   scrollbar-width: none;
 }
