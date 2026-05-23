@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Flame, ShieldCheck, Fingerprint, ArrowRight, Zap, 
+  Flame, ShieldCheck, ArrowRight, Zap, 
   Sparkles, Lock, Mail, Eye, EyeOff, Globe, 
   Smartphone, Shield, ChevronRight, CheckCircle2,
-  Cpu, Database, Cloud, Wifi, Info, Star, Heart
+  Cpu, Database, Info, Star, Heart, Fingerprint
 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -57,7 +57,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [step, setStep] = useState(1)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -66,6 +65,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!email || !password) return
+    
     setIsLoading(true)
     setError('')
     try {
@@ -130,135 +131,75 @@ export default function LoginPage() {
           transition={{ delay: 0.2 }}
           className="bg-[#121212]/80 backdrop-blur-3xl rounded-[3.5rem] border border-white/10 p-10 shadow-2xl relative overflow-hidden group"
         >
-          <AnimatePresence mode="wait">
-            {step === 1 ? (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-              >
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-[950] text-white tracking-tight">Security Check</h3>
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-widest leading-relaxed">
-                    Masukkan identitas digital Anda untuk mengakses jaringan Hayati.
-                  </p>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-[950] text-white tracking-tight">Access Terminal</h3>
+              <p className="text-xs font-bold text-white/40 uppercase tracking-widest leading-relaxed">
+                Masukkan identitas digital Anda untuk login.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="group/input relative">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-primary transition-colors">
+                  <Mail className="w-5 h-5" />
                 </div>
+                <input 
+                  type="email"
+                  placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-16 pl-16 pr-6 bg-white/5 border border-white/5 rounded-2xl text-white font-bold text-sm focus:bg-white/10 focus:border-primary/30 focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-white/10"
+                  required
+                />
+              </div>
 
-                <div className="space-y-4">
-                  <div className="group/input relative">
-                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-primary transition-colors">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <input 
-                      type="email"
-                      placeholder="Email Address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full h-16 pl-16 pr-6 bg-white/5 border border-white/5 rounded-2xl text-white font-bold text-sm focus:bg-white/10 focus:border-primary/30 focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-white/10"
-                    />
-                  </div>
-
-                  <div className="group/input relative">
-                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-primary transition-colors">
-                      <Lock className="w-5 h-5" />
-                    </div>
-                    <input 
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Security Token"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-16 pl-16 pr-16 bg-white/5 border border-white/5 rounded-2xl text-white font-bold text-sm focus:bg-white/10 focus:border-primary/30 focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-white/10"
-                    />
-                    <button 
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
+              <div className="group/input relative">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-primary transition-colors">
+                  <Lock className="w-5 h-5" />
                 </div>
-
-                {error && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3 text-rose-400"
-                  >
-                    <Info className="w-4 h-4 shrink-0" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{error}</span>
-                  </motion.div>
-                )}
-
+                <input 
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-16 pl-16 pr-16 bg-white/5 border border-white/5 rounded-2xl text-white font-bold text-sm focus:bg-white/10 focus:border-primary/30 focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-white/10"
+                  required
+                />
                 <button 
-                  onClick={() => email && password && setStep(2)}
-                  disabled={!email || !password}
-                  className="w-full h-16 rounded-2xl bg-white text-black font-[1000] text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all active:scale-95 disabled:opacity-20 shadow-xl"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
                 >
-                  Verify Identity <ArrowRight className="w-4 h-4" />
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-10"
+              </div>
+            </div>
+
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3 text-rose-400"
               >
-                <div className="space-y-2">
-                   <button onClick={() => setStep(1)} className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] flex items-center gap-2 hover:text-primary transition-colors mb-4">
-                      <ChevronRight className="w-3 h-3 rotate-180" /> Back to Credentials
-                   </button>
-                   <h3 className="text-2xl font-[950] text-white tracking-tight">Biometric Link</h3>
-                   <p className="text-xs font-bold text-white/40 uppercase tracking-widest leading-relaxed">
-                      Konfirmasi akses melalui protokol enkripsi tingkat lanjut.
-                   </p>
-                </div>
-
-                <div className="flex flex-col items-center justify-center py-10 relative">
-                   <div className="absolute inset-0 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-                   <motion.div
-                     initial={{ scale: 0.8 }}
-                     animate={{ scale: [0.8, 1.1, 1] }}
-                     transition={{ duration: 0.5 }}
-                     className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-2xl shadow-primary/40 relative z-10"
-                   >
-                      <Fingerprint className="w-16 h-16 text-white stroke-[1.5]" />
-                      <motion.div 
-                        className="absolute inset-0 border-2 border-white rounded-[2.5rem]"
-                        animate={{ opacity: [0, 1, 0], scale: [1, 1.2, 1.4] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                   </motion.div>
-                </div>
-
-                <div className="space-y-3">
-                   <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/5">
-                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                      <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">AES-256 Encrypted Connection</span>
-                   </div>
-                   <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/5">
-                      <Wifi className="w-4 h-4 text-blue-400" />
-                      <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Verified Workstation ID</span>
-                   </div>
-                </div>
-
-                <button 
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className="w-full h-16 rounded-2xl bg-primary text-white font-[1000] text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all active:scale-95 shadow-xl shadow-primary/20"
-                >
-                  {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <><Zap className="w-4 h-4" /> Finalize Login</>
-                  )}
-                </button>
+                <Info className="w-4 h-4 shrink-0" />
+                <span className="text-[10px] font-black uppercase tracking-widest">{error}</span>
               </motion.div>
             )}
-          </AnimatePresence>
+
+            <button 
+              type="submit"
+              disabled={isLoading || !email || !password}
+              className="w-full h-16 rounded-2xl bg-primary text-white font-[1000] text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all active:scale-95 disabled:opacity-20 shadow-xl shadow-primary/20"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>Sign In Now <Zap className="w-4 h-4 fill-current" /></>
+              )}
+            </button>
+          </form>
+          
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-1000" />
         </motion.div>
 
@@ -308,16 +249,6 @@ export default function LoginPage() {
                  />
               </div>
             ))}
-         </div>
-      </div>
-
-      <div className="fixed bottom-10 right-10 opacity-20 hidden lg:block">
-         <div className="text-right">
-            <p className="text-[10px] font-black text-white uppercase tracking-[0.5em]">Terminal Connection</p>
-            <div className="flex items-center justify-end gap-2 mt-2">
-               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-               <span className="text-[8px] font-black text-emerald-500 uppercase">Live Ops</span>
-            </div>
          </div>
       </div>
 
