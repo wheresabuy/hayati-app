@@ -10,27 +10,25 @@
 }
 
 :root {
-  /* Dynamic Background - Default to neutral off-white/gray */
-  --background: #fafafa; 
-  --foreground: #121212;
-  --card: #ffffff;
-  --card-foreground: #121212;
-  --popover: #ffffff;
-  --popover-foreground: #121212;
-  --primary: #f59e0b;
-  --primary-foreground: #ffffff;
-  --secondary: #f4f4f4;
-  --secondary-foreground: #121212;
-  --muted: rgba(0, 0, 0, 0.05);
-  --muted-foreground: #525252;
-  --accent: #f4f4f4;
-  --accent-foreground: #121212;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.05);
-  --input: #ffffff;
-  --ring: #121212;
-  --radius: 2rem;
+  /* EXECUTIVE BUSINESS PALETTE */
+  --background: #FDFBF7; /* Soothing Corporate Cream */
+  --foreground: #2C3338; /* Dark Charcoal for high readability */
+  
+  --card: #FFFFFF;
+  --card-foreground: #2C3338;
+  
+  --primary: #6488EA; /* Gentle Dusty Blue */
+  --primary-foreground: #FFFFFF;
+  
+  --secondary: #F1F5F9; /* Muted Slate-Gray for layout structure */
+  --secondary-foreground: #2C3338;
+  
+  --positive: #5A8B6B; /* Deep Sage Green for growth metrics */
+  --negative: #D96B6B; /* Muted Rose for alerts/debts */
+  
+  --muted: #5C6770; /* Muted Charcoal for secondary text */
+  --border: #E8EBEF;
+  --radius: 1.5rem; /* Precisely rounded corners */
 }
 
 html, body {
@@ -38,16 +36,11 @@ html, body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   min-height: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-/* Force dark theme for login specifically via global class if needed */
-.login-theme {
-  background-color: #050505 !important;
 }
 
 .app-container {
@@ -63,48 +56,71 @@ html, body {
 main {
   flex: 1;
   width: 100%;
-  /* Standard padding for bottom nav */
-  padding-bottom: 100px;
+  padding-bottom: 120px;
 }
 
-/* 2026 Premium Shadow & Glass Effects */
-.shadow-premium {
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04);
+/* EXECUTIVE STYLING & SHADOWS */
+.shadow-subtle {
+  box-shadow: 0 4px 24px -6px rgba(44, 51, 56, 0.05);
+}
+
+.shadow-executive {
+  box-shadow: 0 12px 40px -8px rgba(44, 51, 56, 0.08);
 }
 
 .shadow-lux {
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px -10px rgba(44, 51, 56, 0.12);
 }
 
-.shadow-soft {
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+/* REFINED CLAYMORPHISM CTA */
+.clay-btn {
+  position: relative;
+  background-color: var(--primary);
+  box-shadow: 
+    0 8px 32px -4px rgba(100, 136, 234, 0.3),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
-.glass-morphism {
-  @apply backdrop-blur-2xl bg-white/70 border border-white/40;
+.clay-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 12px 40px -2px rgba(100, 136, 234, 0.4),
+    inset 0 3px 6px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Typography Perfection */
-h1, h2, h3, h4 {
-  font-weight: 1000 !important;
-  color: #121212 !important;
+.clay-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    0 4px 16px -2px rgba(100, 136, 234, 0.2),
+    inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.clay-card {
+  background: white;
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 1);
+  border: 1px solid #F1F5F9;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
+  background: rgba(100, 136, 234, 0.15);
+  color: var(--primary);
+}
+
+h1, h2, h3, h4 {
+  color: var(--foreground) !important;
+  font-weight: 800 !important; /* Professional authority weight */
 }
 
 /* Hide scrollbars but keep functionality */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.1) transparent;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
