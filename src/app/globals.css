@@ -10,14 +10,14 @@
 }
 
 :root {
-  /* Exact gray from user image: Cloud Gray #a3a5a7 */
-  --background: #a3a5a7; 
+  /* Dynamic Background - Default to neutral off-white/gray */
+  --background: #fafafa; 
   --foreground: #121212;
   --card: #ffffff;
   --card-foreground: #121212;
   --popover: #ffffff;
   --popover-foreground: #121212;
-  --primary: #121212;
+  --primary: #f59e0b;
   --primary-foreground: #ffffff;
   --secondary: #f4f4f4;
   --secondary-foreground: #121212;
@@ -33,15 +33,21 @@
   --radius: 2rem;
 }
 
-body {
-  background-color: #a3a5a7; /* Neutral Gray from image */
+html, body {
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.02em;
-  min-height: 100vh;
-  /* Fluid Height Handling */
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
+}
+
+/* Force dark theme for login specifically via global class if needed */
+.login-theme {
+  background-color: #050505 !important;
 }
 
 .app-container {
@@ -49,7 +55,6 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
-  background-color: #a3a5a7; /* Match body */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -58,36 +63,13 @@ body {
 main {
   flex: 1;
   width: 100%;
-  /* Ensure padding for bottom nav but use standard layout */
+  /* Standard padding for bottom nav */
   padding-bottom: 100px;
 }
 
-/* Fix for forced heights that break responsive */
-* {
-  min-width: 0;
-  min-height: 0;
-}
-
-/* Ensure images and videos are responsive */
-img, video {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Responsive utility for small screens */
-@media (max-width: 380px) {
-  .p-8 { padding: 1.5rem !important; }
-  .p-10 { padding: 2rem !important; }
-  .text-3xl { font-size: 1.5rem !important; }
-  .text-4xl { font-size: 1.875rem !important; }
-}
-
-/* 2025 High Contrast Polish */
-.glass {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+/* 2026 Premium Shadow & Glass Effects */
+.shadow-premium {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04);
 }
 
 .shadow-lux {
@@ -98,22 +80,14 @@ img, video {
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
 }
 
-/* Typography Refinement */
+.glass-morphism {
+  @apply backdrop-blur-2xl bg-white/70 border border-white/40;
+}
+
+/* Typography Perfection */
 h1, h2, h3, h4 {
-  font-weight: 950 !important;
+  font-weight: 1000 !important;
   color: #121212 !important;
-}
-
-.font-black {
-  font-weight: 950 !important;
-}
-
-/* Card Style for Contrast */
-.card-premium {
-  background: white !important;
-  border: none !important;
-  border-radius: 2.5rem !important;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -122,4 +96,15 @@ h1, h2, h3, h4 {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+/* Hide scrollbars but keep functionality */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.1) transparent;
 }

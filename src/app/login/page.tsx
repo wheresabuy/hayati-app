@@ -57,8 +57,19 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [mounted, setMounted] = useState(false)
 
+  // FORCE GLOBAL THEME ON MOUNT
   useEffect(() => {
     setMounted(true)
+    
+    // Add temporary class to html and body to kill the white box
+    document.documentElement.classList.add('login-theme')
+    document.body.classList.add('login-theme')
+    
+    return () => {
+      // Clean up when leaving the login page
+      document.documentElement.classList.remove('login-theme')
+      document.body.classList.remove('login-theme')
+    }
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,12 +97,14 @@ export default function LoginPage() {
     }
   }
 
-  if (!mounted) return null
+  if (!mounted) return (
+    <div className="fixed inset-0 bg-[#050505] z-[9999]" /> // Solid splash while mounting
+  )
 
   return (
-    <div className="relative min-h-[100dvh] w-full flex items-center justify-center p-6 selection:bg-primary/30 selection:text-primary overflow-x-hidden">
+    <div className="relative min-h-[100dvh] w-full flex items-center justify-center p-6 selection:bg-primary/30 selection:text-primary overflow-x-hidden bg-[#050505]">
       
-      {/* SOLID FIXED BACKGROUND - Fixes the "white box" issue on scroll/bounce */}
+      {/* DOUBLE PROTECTION LAYER */}
       <div className="fixed inset-0 bg-[#050505] -z-[100]" />
       
       {/* Immersive Visual Layers */}
@@ -125,7 +138,7 @@ export default function LoginPage() {
           </div>
         </motion.div>
 
-        {/* Auth Form */}
+        {/* Auth Form Container */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -141,8 +154,8 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="relative">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20">
+              <div className="relative group/field">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/field:text-primary transition-colors">
                   <Mail className="w-5 h-5" />
                 </div>
                 <input 
@@ -155,8 +168,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="relative">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20">
+              <div className="relative group/field">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/field:text-primary transition-colors">
                   <Lock className="w-5 h-5" />
                 </div>
                 <input 
@@ -204,7 +217,7 @@ export default function LoginPage() {
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
         </motion.div>
 
-        {/* Footer Features */}
+        {/* Footer Navigation */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -238,7 +251,7 @@ export default function LoginPage() {
 
       </div>
 
-      {/* Connection Status Decorator */}
+      {/* Floating Status Indicator */}
       <div className="fixed bottom-10 right-10 opacity-20 pointer-events-none">
          <div className="text-right space-y-1">
             <p className="text-[8px] font-black text-white uppercase tracking-[0.4em]">Connection Status</p>
