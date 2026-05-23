@@ -10,7 +10,7 @@ import {
   Layers, Package, ShoppingCart, Settings, LogOut, ChevronDown,
   Globe, Smartphone, Coffee, Star, Heart, Target, Flame,
   Briefcase, BarChart3, PieChart, Info, MapPin, MousePointer2,
-  Trophy, Rocket, ZapOff, Fingerprint, Crown, Diamond, User
+  Trophy, Rocket, ZapOff, Crown, Diamond, User
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
@@ -337,7 +337,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-32 -mt-32" />
              <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -ml-24 -mb-24" />
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-[3] pointer-events-none">
-                <Fingerprint className="w-64 h-64 stroke-[0.5]" />
+                <Target className="w-64 h-64 stroke-[0.5]" />
              </div>
            </motion.div>
         </section>
