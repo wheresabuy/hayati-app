@@ -38,6 +38,24 @@ export async function setCustomerPrice(customerId: string, productId: string, se
   return price
 }
 
+export async function setBulkCustomerPrices(customerId: string, updates: { productId: string, sellingPrice: number }[]) {
+  const session = await auth()
+  if ((session?.user as any)?.role !== 'ADMIN') throw new Error('Unauthorized')
+
+  const results = await prisma.$transaction(
+    updates.map(u => 
+      prisma.customerPrice.upsert({
+        where: { customerId_productId: { customerId, productId: u.productId } },
+        update: { sellingPrice: u.sellingPrice },
+        create: { customerId, productId: u.productId, sellingPrice: u.sellingPrice }
+      })
+    )
+  )
+  revalidatePath('/settings')
+  revalidatePath('/manage')
+  return results
+}
+
 export async function updateProduct(id: string, data: { name?: string, baseCost?: number, stock?: number, priceIncrease?: number }) {
   const session = await auth()
   if (!session?.user) throw new Error('Unauthorized')
