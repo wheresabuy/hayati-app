@@ -13,6 +13,7 @@ import {
   History, Settings, Trash2, Edit3, Heart, Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -51,31 +52,34 @@ const CompactLineChart = React.memo(({ data, color }: { data: number[], color: s
 })
 CompactLineChart.displayName = 'CompactLineChart'
 
-const CustomerStats = ({ stats }: any) => (
-  <div className="grid grid-cols-2 gap-4">
-    {[
-      { label: 'Total Agen', value: '42', sub: 'Aktif Pekan Ini', icon: Users, color: 'bg-blue-500' },
-      { label: 'Total Piutang', value: 'Rp12.4M', sub: 'Butuh Followup', icon: Wallet, color: 'bg-rose-500' },
-      { label: 'VIP Member', value: '18', sub: 'Loyalitas Tinggi', icon: Star, color: 'bg-amber-500' },
-      { label: 'New Lead', value: '5', sub: 'Belum Terverifikasi', icon: UserPlus, color: 'bg-emerald-500' },
-    ].map((s, i) => (
-      <motion.div
-        key={i}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 * i }}
-        className="p-6 rounded-[2.5rem] bg-white border border-slate-50 shadow-premium group hover:border-primary/20 transition-all"
-      >
-        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg mb-4 group-hover:scale-110 transition-transform", s.color)}>
-          <s.icon className="w-5 h-5" />
-        </div>
-        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{s.label}</p>
-        <h4 className="text-xl font-[1000] text-slate-900 tracking-tighter mt-1">{s.value}</h4>
-        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{s.sub}</p>
-      </motion.div>
-    ))}
-  </div>
-)
+const CustomerStats = ({ customers }: any) => {
+  const totalDebt = customers.reduce((acc: number, c: any) => acc + (c.totalDebt || 0), 0)
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {[
+        { label: 'Total Agen', value: customers.length.toString(), sub: 'Aktif Pekan Ini', icon: Users, color: 'bg-blue-500' },
+        { label: 'Total Piutang', value: formatCurrency(totalDebt), sub: 'Butuh Followup', icon: Wallet, color: 'bg-rose-500' },
+        { label: 'VIP Member', value: '18', sub: 'Loyalitas Tinggi', icon: Star, color: 'bg-amber-500' },
+        { label: 'New Lead', value: '5', sub: 'Belum Terverifikasi', icon: UserPlus, color: 'bg-emerald-500' },
+      ].map((s, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 * i }}
+          className="p-6 rounded-[2.5rem] bg-white border border-slate-50 shadow-premium group hover:border-primary/20 transition-all"
+        >
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg mb-4 group-hover:scale-110 transition-transform", s.color)}>
+            <s.icon className="w-5 h-5" />
+          </div>
+          <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{s.label}</p>
+          <h4 className="text-xl font-[1000] text-slate-900 tracking-tighter mt-1 truncate">{s.value}</h4>
+          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{s.sub}</p>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
 
 const CategoryPill = ({ label, active, onClick, count }: any) => (
   <button 
@@ -97,6 +101,7 @@ const CategoryPill = ({ label, active, onClick, count }: any) => (
 )
 
 export default function CustomersClient({ customers }: { customers: any[] }) {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('Semua')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -105,6 +110,22 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
     (c.name.toLowerCase().includes(search.toLowerCase()) || c.uid.toLowerCase().includes(search.toLowerCase())) &&
     (filter === 'Semua' || (filter === 'Hutang' && c.totalDebt > 0) || (filter === 'VIP' && c.id.length % 2 === 0))
   )
+
+  const handleExportCSV = () => {
+    const headers = ['UID', 'Nama', 'Total Piutang', 'Sisa Piutang']
+    const rows = filteredCustomers.map(c => [c.uid, c.name, c.totalNota, c.sisaPiutang])
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `HAYATI_AGEN_EXPORT_${new Date().toISOString().slice(0, 10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-40">
@@ -119,7 +140,10 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-           <button className="w-14 h-14 rounded-3xl bg-[#121212] flex items-center justify-center text-white shadow-2xl shadow-black/20 hover:scale-105 transition-transform">
+           <button 
+             onClick={() => router.push('/manage')}
+             className="w-14 h-14 rounded-3xl bg-[#121212] flex items-center justify-center text-white shadow-2xl shadow-black/20 hover:scale-105 transition-transform active:scale-95"
+           >
               <UserPlus className="w-6 h-6" />
            </button>
         </div>
@@ -128,7 +152,7 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
       <div className="max-w-[480px] mx-auto pt-10 px-6 space-y-10">
         
         {/* Quick Insights */}
-        <CustomerStats />
+        <CustomerStats customers={customers} />
 
         {/* Global Search & Filters */}
         <section className="space-y-6">
@@ -191,7 +215,10 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
                  <h3 className="text-2xl font-[1000] text-slate-900 tracking-tighter">Database Agen</h3>
                  <p className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mt-1.5 italic">Synchronized Grid</p>
               </div>
-              <button className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors">
+              <button 
+                onClick={handleExportCSV}
+                className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors"
+              >
                  Ekspor Data <Download className="w-3 h-3" />
               </button>
            </div>
@@ -298,7 +325,10 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
                       <h4 className="text-xl font-[1000] text-slate-900 tracking-tighter italic">Data Tidak Ditemukan</h4>
                       <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Coba keyword pencarian lain</p>
                    </div>
-                   <button className="px-8 py-4 bg-[#121212] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+                   <button 
+                     onClick={() => setSearch('')}
+                     className="px-8 py-4 bg-[#121212] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all"
+                   >
                       Reset Pencarian
                    </button>
                  </motion.div>
@@ -308,7 +338,7 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
         </section>
 
         {/* Intelligence Insight */}
-        <section className="p-12 rounded-[4rem] bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/20">
+        <section className="p-12 rounded-[4rem] bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/20 group">
            <div className="relative z-10 flex flex-col gap-10">
               <div className="flex justify-between items-start">
                  <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-xl">
@@ -325,12 +355,15 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
                     Kembangkan jaringan Anda lebih luas. Agen dengan performa 5-bintang akan mendapatkan prioritas stok premium.
                  </p>
               </div>
-              <button className="flex items-center gap-4 bg-white text-indigo-600 px-10 py-5 rounded-[2.5rem] text-[10px] font-[1000] uppercase tracking-widest shadow-2xl hover:bg-emerald-400 hover:text-white transition-all active:scale-95 w-fit">
+              <button 
+                onClick={() => alert('VIP Portal loading...')}
+                className="flex items-center gap-4 bg-white text-indigo-600 px-10 py-5 rounded-[2.5rem] text-[10px] font-[1000] uppercase tracking-widest shadow-2xl hover:bg-emerald-400 hover:text-white transition-all active:scale-95 w-fit"
+              >
                  Buka VIP Portal <Sparkles className="w-4 h-4" />
               </button>
            </div>
            <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-white/10 rounded-full blur-[80px]" />
-           <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+           <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-1000">
               <Globe className="w-96 h-96 -ml-20 -mt-20 stroke-[0.5]" />
            </div>
         </section>
@@ -343,11 +376,6 @@ export default function CustomersClient({ customers }: { customers: any[] }) {
                  <span className="text-[9px] font-black text-slate-900 uppercase tracking-[0.2em] italic">Network Health: Excellent</span>
               </div>
               <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Hayati Agency CRM Terminal</p>
-           </div>
-           <div className="flex items-center justify-center gap-4 opacity-20">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-              <div className="w-3 h-3 rounded-full bg-primary" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
            </div>
         </footer>
 

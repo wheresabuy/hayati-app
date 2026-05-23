@@ -12,6 +12,7 @@ import {
   BarChart3, Layers, Globe, Cpu, Database
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -101,6 +102,7 @@ const CategoryPill = ({ label, active, onClick, count }: any) => (
 )
 
 export default function InventoryClient({ products }: { products: any[] }) {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('Semua')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -109,6 +111,22 @@ export default function InventoryClient({ products }: { products: any[] }) {
     (p.name.toLowerCase().includes(search.toLowerCase())) &&
     (filter === 'Semua' || (filter === 'Menipis' && p.stock < 10) || (filter === 'Tersedia' && p.stock >= 10))
   )
+
+  const handleExportCSV = () => {
+    const headers = ['Nama Produk', 'Stok', 'Modal Satuan', 'Total Nilai Modal']
+    const rows = filteredProducts.map(p => [p.name, p.stock, p.baseCost, p.baseCost * p.stock])
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `HAYATI_GUDANG_EXPORT_${new Date().toISOString().slice(0, 10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-40">
@@ -123,7 +141,10 @@ export default function InventoryClient({ products }: { products: any[] }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-           <button className="w-14 h-14 rounded-3xl bg-[#121212] flex items-center justify-center text-white shadow-2xl shadow-black/20 hover:scale-105 transition-transform">
+           <button 
+             onClick={() => router.push('/manage')}
+             className="w-14 h-14 rounded-3xl bg-[#121212] flex items-center justify-center text-white shadow-2xl shadow-black/20 hover:scale-105 transition-transform active:scale-95"
+           >
               <Plus className="w-6 h-6" />
            </button>
         </div>
@@ -181,7 +202,10 @@ export default function InventoryClient({ products }: { products: any[] }) {
                  <h3 className="text-2xl font-[1000] text-slate-900 tracking-tighter">Inventori Real-time</h3>
                  <p className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mt-1.5 italic">Gudang Utama Pekanbaru</p>
               </div>
-              <button className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors">
+              <button 
+                onClick={handleExportCSV}
+                className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors"
+              >
                  Cetak Laporan <Download className="w-3 h-3" />
               </button>
            </div>
@@ -248,7 +272,7 @@ export default function InventoryClient({ products }: { products: any[] }) {
                                     <div key={a} className="w-6 h-6 rounded-full border-2 border-white bg-slate-100" />
                                   ))}
                                </div>
-                               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">Terjual ke 12 Agen</span>
+                               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">Inventory Tracked</span>
                             </div>
                             <div className="flex items-center gap-2">
                                <div className="w-24 h-6 bg-slate-50 rounded-xl overflow-hidden p-0.5">
@@ -271,14 +295,14 @@ export default function InventoryClient({ products }: { products: any[] }) {
                    </Link>
                  </motion.div>
                )) : (
-                 <div className="py-20 text-center text-slate-300">Produk tidak ditemukan</div>
+                 <div className="py-20 text-center text-slate-300 font-bold uppercase tracking-widest">Produk tidak ditemukan</div>
                )}
              </AnimatePresence>
            </div>
         </section>
 
         {/* Achievement Card */}
-        <section className="p-12 rounded-[4.5rem] bg-[#121212] text-white relative overflow-hidden shadow-2xl">
+        <section className="p-12 rounded-[4.5rem] bg-[#121212] text-white relative overflow-hidden shadow-2xl group">
            <div className="relative z-10 space-y-8">
               <div className="flex justify-between items-start">
                  <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
@@ -293,12 +317,15 @@ export default function InventoryClient({ products }: { products: any[] }) {
               <p className="text-white/40 text-[10px] font-bold leading-relaxed max-w-[220px] uppercase tracking-widest mt-4">
                  Semua data stok terikat langsung dengan sistem kasir real-time. Tidak ada selisih, tidak ada delay.
               </p>
-              <button className="w-full py-5 rounded-[2.5rem] bg-white text-black text-[10px] font-[1000] uppercase tracking-[0.3em] hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
+              <button 
+                onClick={() => router.push('/manage')}
+                className="w-full py-5 rounded-[2.5rem] bg-white text-black text-[10px] font-[1000] uppercase tracking-[0.3em] hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95"
+              >
                  Lakukan Stock Opname
               </button>
            </div>
            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-[100px] -mr-40 -mt-40" />
-           <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-[2] pointer-events-none">
+           <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-[2] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
               <Cpu className="w-64 h-64 stroke-[0.5]" />
            </div>
         </section>

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Banknote, Receipt, Users, TrendingUp, ChevronRight, Clock, 
   ArrowUpRight, ArrowDownRight, Activity, Wallet, CreditCard, 
@@ -13,6 +13,7 @@ import {
   Trophy, Rocket, ZapOff, Fingerprint, Crown, Diamond
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 const formatIDR = (val: number) => 
@@ -67,7 +68,7 @@ const CompactLineChart = React.memo(({ data, color, height = 48 }: { data: numbe
 CompactLineChart.displayName = 'CompactLineChart'
 
 const DonutChart = ({ value, total, color, icon: Icon }: any) => {
-  const percentage = (value / total) * 100
+  const percentage = Math.min((value / total) * 100, 100)
   const circumference = 2 * Math.PI * 40
   const strokeDashoffset = circumference - (percentage / 100) * circumference
 
@@ -117,13 +118,14 @@ const ProgressBar = ({ progress, color, label, icon: Icon }: { progress: number,
   </div>
 )
 
-const MetricCard = React.memo(({ title, value, subValue, trend, icon: Icon, color, delay }: any) => (
+const MetricCard = React.memo(({ title, value, subValue, trend, icon: Icon, color, delay, onClick }: any) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ delay }}
     whileHover={{ y: -6, scale: 1.02 }}
-    className="relative group h-full"
+    onClick={onClick}
+    className="relative group h-full cursor-pointer"
   >
     <div className={cn(
       "h-full p-6 rounded-[3rem] bg-white border border-slate-50 shadow-premium transition-all duration-500",
@@ -162,7 +164,7 @@ const MetricCard = React.memo(({ title, value, subValue, trend, icon: Icon, colo
 ))
 MetricCard.displayName = 'MetricCard'
 
-const AgentLeaderboard = ({ agents }: any) => (
+const AgentLeaderboard = ({ agents, onNavigate }: any) => (
   <div className="grid grid-cols-1 gap-4">
     {agents.map((agent: any, i: number) => (
       <motion.div 
@@ -170,11 +172,12 @@ const AgentLeaderboard = ({ agents }: any) => (
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 * i }}
+        onClick={() => onNavigate(`/customers/${agent.id}`)}
         className="flex items-center gap-4 p-4 rounded-[2.5rem] bg-white border border-slate-50 shadow-soft hover:shadow-premium transition-all cursor-pointer group"
       >
         <div className="relative">
-          <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden p-0.5 border border-slate-50 group-hover:border-primary/20 transition-all">
-            <div className="w-full h-full bg-slate-200 rounded-xl" />
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden p-0.5 border border-slate-50 group-hover:border-primary/20 transition-all flex items-center justify-center">
+            <User className="w-8 h-8 text-slate-300" />
           </div>
           {i === 0 && (
              <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center border-4 border-white shadow-sm">
@@ -204,106 +207,8 @@ const AgentLeaderboard = ({ agents }: any) => (
   </div>
 )
 
-const InteractiveWidget = ({ title, icon: Icon, children, className, action }: any) => (
-  <div className={cn(
-    "p-8 rounded-[3.5rem] bg-white border border-slate-100 shadow-premium overflow-hidden relative group",
-    className
-  )}>
-    <div className="flex items-center justify-between mb-8 relative z-10">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-900 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-          <Icon className="w-6 h-6" />
-        </div>
-        <div>
-           <h3 className="text-base font-[1000] text-slate-900 tracking-tight leading-none uppercase">{title}</h3>
-           <p className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mt-1.5 italic">Live Analysis</p>
-        </div>
-      </div>
-      {action ? action : (
-        <button className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 hover:text-slate-900 transition-colors">
-          <MoreHorizontal className="w-5 h-5" />
-        </button>
-      )}
-    </div>
-    <div className="relative z-10">{children}</div>
-    <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-1000 pointer-events-none" />
-    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-  </div>
-)
-
-const FeatureHighlight = ({ title, desc, icon: Icon, color }: any) => (
-  <motion.div 
-    whileHover={{ y: -10, scale: 1.02 }}
-    className="p-10 rounded-[4rem] bg-[#121212] text-white relative overflow-hidden group shadow-2xl shadow-black/20"
-  >
-    <div className="relative z-10 flex flex-col h-full justify-between gap-12">
-      <div className="flex items-center justify-between">
-         <div className={cn("w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-12 group-hover:rotate-0 transition-transform duration-500", color)}>
-           <Icon className="w-8 h-8 text-white" />
-         </div>
-         <div className="flex flex-col items-end text-right">
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Efficiency</p>
-            <p className="text-2xl font-[1000] text-primary tracking-tighter mt-1">98.4%</p>
-         </div>
-      </div>
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-           <div className="w-8 h-px bg-primary/40" />
-           <span className="text-[9px] font-black text-primary uppercase tracking-[0.4em] italic">System Intelligence</span>
-        </div>
-        <h3 className="text-3xl font-[1000] tracking-tighter leading-tight mb-4">{title}</h3>
-        <p className="text-white/40 text-xs font-bold leading-relaxed max-w-[260px] uppercase tracking-wide">
-          {desc}
-        </p>
-      </div>
-      <button className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-[2.5rem] text-[10px] font-[1000] uppercase tracking-widest shadow-2xl hover:bg-primary hover:text-white transition-all active:scale-95 w-fit">
-        Explore Terminal <ArrowRight className="w-4 h-4" />
-      </button>
-    </div>
-    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-32 -mt-32" />
-    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -ml-24 -mb-24" />
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-[3] pointer-events-none">
-       <Fingerprint className="w-64 h-64 stroke-[0.5]" />
-    </div>
-  </motion.div>
-)
-
-const InsightGrid = () => (
-   <div className="grid grid-cols-2 gap-4">
-      <div className="p-6 rounded-[2.5rem] bg-emerald-500 text-white flex flex-col justify-between h-48 shadow-xl shadow-emerald-500/20 relative overflow-hidden group">
-         <div className="relative z-10 flex justify-between items-start">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-               <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Revenue</span>
-         </div>
-         <div className="relative z-10">
-            <p className="text-2xl font-[1000] tracking-tighter leading-none">+24.8%</p>
-            <p className="text-[8px] font-black uppercase tracking-widest mt-2 opacity-80">Dari Bulan Lalu</p>
-         </div>
-         <div className="absolute -bottom-10 -right-5 opacity-20 transform rotate-12 group-hover:scale-110 transition-transform">
-            <BarChart3 className="w-32 h-32" />
-         </div>
-      </div>
-      <div className="p-6 rounded-[2.5rem] bg-indigo-600 text-white flex flex-col justify-between h-48 shadow-xl shadow-indigo-600/20 relative overflow-hidden group">
-         <div className="relative z-10 flex justify-between items-start">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-               <Users className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Retention</span>
-         </div>
-         <div className="relative z-10">
-            <p className="text-2xl font-[1000] tracking-tighter leading-none">92.1%</p>
-            <p className="text-[8px] font-black uppercase tracking-widest mt-2 opacity-80">Loyalitas Agen</p>
-         </div>
-         <div className="absolute -bottom-10 -right-5 opacity-20 transform -rotate-12 group-hover:scale-110 transition-transform">
-            <PieChart className="w-32 h-32" />
-         </div>
-      </div>
-   </div>
-)
-
 export default function DashboardClient({ stats }: { stats: any }) {
+  const router = useRouter()
   const [time, setTime] = useState(new Date())
   const [isScrolled, setIsScrolled] = useState(false)
   
@@ -321,17 +226,21 @@ export default function DashboardClient({ stats }: { stats: any }) {
   const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 
   const metrics = useMemo(() => [
-    { title: 'Omset', value: formatIDR(stats.totalOmset), subValue: 'Growth terdeteksi +12.5%', trend: 12.5, icon: Receipt, color: 'bg-blue-600' },
-    { title: 'Kas', value: formatIDR(stats.totalKasDiterima), subValue: 'Likuiditas sangat aman', trend: 8.2, icon: Banknote, color: 'bg-emerald-600' },
-    { title: 'Piutang', value: formatIDR(stats.totalPiutang), subValue: 'Follow-up 12 agen pending', trend: -4.1, icon: Users, color: 'bg-rose-600' },
-    { title: 'Laba', value: formatIDR(stats.totalKeuntunganBersih), subValue: 'Efisiensi operasional tinggi', trend: 15.3, icon: TrendingUp, color: 'bg-amber-500' },
+    { title: 'Omset', value: formatIDR(stats.totalOmset), subValue: 'Growth terdeteksi +12.5%', trend: 12.5, icon: Receipt, color: 'bg-blue-600', path: '/settings' },
+    { title: 'Kas', value: formatIDR(stats.totalKasDiterima), subValue: 'Likuiditas sangat aman', trend: 8.2, icon: Banknote, color: 'bg-emerald-600', path: '/settings' },
+    { title: 'Piutang', value: formatIDR(stats.totalPiutang), subValue: 'Follow-up 12 agen pending', trend: -4.1, icon: Users, color: 'bg-rose-600', path: '/customers' },
+    { title: 'Laba', value: formatIDR(stats.totalKeuntunganBersih), subValue: 'Efisiensi operasional tinggi', trend: 15.3, icon: TrendingUp, color: 'bg-amber-500', path: '/settings' },
   ], [stats])
 
   const topAgents = useMemo(() => [
-    { uid: 'USR-082', name: 'Agen Haji Budi', sales: 142, growth: 12 },
-    { uid: 'USR-115', name: 'Toko Berkah Jaya', sales: 98, growth: 8 },
-    { uid: 'USR-041', name: 'Ibu Ratna Sembako', sales: 76, growth: -2 },
+    { id: '1', uid: 'AGN-001', name: 'Bp Nana', sales: 142 },
+    { id: '2', uid: 'AGN-002', name: 'Bp Seno UD mulya Jaya', sales: 98 },
+    { id: '3', uid: 'AGN-003', name: 'Tk Kartika Putri', sales: 76 },
   ], [])
+
+  const handleNavigate = (path: string) => {
+    router.push(path)
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-64 selection:bg-primary/20 selection:text-primary">
@@ -342,7 +251,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
         isScrolled ? "bg-white/80 backdrop-blur-2xl border-b border-slate-100 shadow-lux translate-y-0" : "bg-transparent translate-y-2"
       )}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="flex items-center gap-4 group cursor-pointer" onClick={() => handleNavigate('/')}>
             <div className="w-12 h-12 rounded-2xl bg-[#121212] flex items-center justify-center text-white shadow-2xl transition-all group-hover:rotate-12 group-hover:scale-110">
               <Flame className="w-7 h-7 fill-primary text-primary" />
             </div>
@@ -356,7 +265,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
                <Bell className="w-5 h-5" />
                <div className="absolute top-3.5 right-3.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white animate-bounce" />
              </button>
-             <div className="w-12 h-12 rounded-[1.25rem] bg-slate-100 border-2 border-white shadow-sm overflow-hidden p-0.5 group cursor-pointer">
+             <div className="w-12 h-12 rounded-[1.25rem] bg-slate-100 border-2 border-white shadow-sm overflow-hidden p-0.5 group cursor-pointer" onClick={() => handleNavigate('/settings')}>
                 <div className="w-full h-full bg-slate-200 rounded-xl group-hover:scale-110 transition-transform" />
              </div>
           </div>
@@ -365,7 +274,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
 
       <div className="max-w-[480px] mx-auto pt-32 px-6 space-y-12">
         
-        {/* Welcome Section with Hero Header */}
+        {/* Welcome Section */}
         <section className="space-y-6">
            <div className="flex items-end justify-between px-2">
               <div className="space-y-2">
@@ -385,37 +294,52 @@ export default function DashboardClient({ stats }: { stats: any }) {
                  <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{time.getDate()} {months[time.getMonth()]}</p>
               </div>
            </div>
-           <FeatureHighlight 
-              title="Global Matrix" 
-              desc="Semua data inventori, piutang agen, dan kas real-time telah disinkronkan ke dalam satu dashboard operasional terpusat."
-              icon={Layers}
-              color="bg-primary"
-           />
-        </section>
-
-        {/* Live Clock & Health Check */}
-        <section className="flex items-center justify-between bg-white p-8 rounded-[3rem] border border-slate-100 shadow-premium group">
-           <div className="flex items-center gap-6">
-              <div className="relative">
-                 <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-900 group-hover:bg-primary group-hover:text-white transition-all">
-                    <Clock className="w-8 h-8" />
+           
+           <motion.div 
+             whileHover={{ y: -10, scale: 1.02 }}
+             className="p-10 rounded-[4rem] bg-[#121212] text-white relative overflow-hidden group shadow-2xl shadow-black/20"
+           >
+             <div className="relative z-10 flex flex-col h-full justify-between gap-12">
+               <div className="flex items-center justify-between">
+                  <div className={cn("w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-12 group-hover:rotate-0 transition-transform duration-500 bg-primary")}>
+                    <Layers className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex flex-col items-end text-right">
+                     <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Efficiency</p>
+                     <p className="text-2xl font-[1000] text-primary tracking-tighter mt-1">98.4%</p>
+                  </div>
+               </div>
+               <div>
+                 <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-px bg-primary/40" />
+                    <span className="text-[9px] font-black text-primary uppercase tracking-[0.4em] italic">System Intelligence</span>
                  </div>
-                 <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-4 border-white animate-pulse" />
-              </div>
-              <div>
-                 <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Current Local Time</p>
-                 <h3 className="text-4xl font-[1000] text-slate-900 tracking-tighter mt-1">
-                    {time.getHours().toString().padStart(2, '0')}:
-                    {time.getMinutes().toString().padStart(2, '0')}
-                    <span className="text-xl text-slate-300 ml-1 font-black opacity-40">
-                       {time.getSeconds().toString().padStart(2, '0')}
-                    </span>
-                 </h3>
-              </div>
-           </div>
-           <button className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 hover:text-slate-900 transition-colors">
-              <Activity className="w-5 h-5" />
-           </button>
+                 <h3 className="text-3xl font-[1000] tracking-tighter leading-tight mb-4">Global Matrix</h3>
+                 <p className="text-white/40 text-xs font-bold leading-relaxed max-w-[260px] uppercase tracking-wide">
+                   Semua data inventori, piutang agen, dan kas real-time telah disinkronkan ke dalam satu dashboard operasional terpusat.
+                 </p>
+               </div>
+               <div className="flex items-center gap-3">
+                 <button 
+                   onClick={() => handleNavigate('/cashier')}
+                   className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-[2.5rem] text-[10px] font-[1000] uppercase tracking-widest shadow-2xl hover:bg-primary hover:text-white transition-all active:scale-95 w-fit"
+                 >
+                   Explore Terminal <ArrowRight className="w-4 h-4" />
+                 </button>
+                 <button 
+                   onClick={() => handleNavigate('/settings')}
+                   className="px-10 py-5 rounded-[2.5rem] bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                 >
+                   Laporan
+                 </button>
+               </div>
+             </div>
+             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-32 -mt-32" />
+             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -ml-24 -mb-24" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-[3] pointer-events-none">
+                <Fingerprint className="w-64 h-64 stroke-[0.5]" />
+             </div>
+           </motion.div>
         </section>
 
         {/* Finance Metrics Grid */}
@@ -425,40 +349,38 @@ export default function DashboardClient({ stats }: { stats: any }) {
                  <h3 className="text-2xl font-[1000] text-slate-900 tracking-tighter">Financials</h3>
                  <p className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mt-1.5">Capital & Growth</p>
               </div>
-              <button className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors">
+              <button 
+                onClick={() => handleNavigate('/settings')}
+                className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors"
+              >
                  Detail Laporan <ChevronRight className="w-3 h-3" />
               </button>
            </div>
            <div className="grid grid-cols-2 gap-5">
              {metrics.map((m, idx) => (
-               <MetricCard key={m.title} {...m} delay={0.1 * idx} />
+               <MetricCard key={m.title} {...m} delay={0.1 * idx} onClick={() => handleNavigate(m.path)} />
              ))}
            </div>
         </section>
 
-        {/* Intelligence Insights */}
-        <section className="space-y-6">
-           <div className="flex items-end justify-between px-2">
-              <div>
-                 <h3 className="text-2xl font-[1000] text-slate-900 tracking-tighter">Intelligence</h3>
-                 <p className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mt-1.5">Data Visualizer</p>
-              </div>
-           </div>
-           <InsightGrid />
-        </section>
-
         {/* Goals & KPI Tracking */}
-        <InteractiveWidget 
-          title="KPI Performance" 
-          icon={Target}
-          action={
-             <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span className="text-[9px] font-black text-slate-900 uppercase">On Track</span>
-             </div>
-          }
-        >
-          <div className="grid grid-cols-1 gap-8 mt-4">
+        <div className="p-8 rounded-[3.5rem] bg-white border border-slate-100 shadow-premium overflow-hidden relative group">
+          <div className="flex items-center justify-between mb-8 relative z-10">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-900 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+                <Target className="w-6 h-6" />
+              </div>
+              <div>
+                 <h3 className="text-base font-[1000] text-slate-900 tracking-tight leading-none uppercase">KPI Performance</h3>
+                 <p className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mt-1.5 italic">Live Analysis</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
+               <ShieldCheck className="w-4 h-4 text-emerald-500" />
+               <span className="text-[9px] font-black text-slate-900 uppercase">On Track</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-8 mt-4 relative z-10">
              <div className="flex items-center gap-8">
                 <DonutChart value={stats.totalOmset} total={stats.totalOmset * 1.5} color="#3b82f6" icon={TrendingUp} />
                 <div className="flex-1 space-y-4">
@@ -476,12 +398,16 @@ export default function DashboardClient({ stats }: { stats: any }) {
                       <p className="text-xs font-[950] text-slate-900 mt-0.5">12 Hari Operasional</p>
                    </div>
                 </div>
-                <button className="px-6 py-3 rounded-2xl bg-[#121212] text-white text-[9px] font-black uppercase tracking-[0.2em] shadow-xl shadow-black/10 active:scale-95 transition-all">
+                <button 
+                  onClick={() => handleNavigate('/settings')}
+                  className="px-6 py-3 rounded-2xl bg-[#121212] text-white text-[9px] font-black uppercase tracking-[0.2em] shadow-xl shadow-black/10 active:scale-95 transition-all"
+                >
                    Manage Target
                 </button>
              </div>
           </div>
-        </InteractiveWidget>
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-1000 pointer-events-none" />
+        </div>
 
         {/* Top Agent Leaderboard */}
         <section className="space-y-8">
@@ -490,16 +416,22 @@ export default function DashboardClient({ stats }: { stats: any }) {
                  <h3 className="text-2xl font-[1000] text-slate-900 tracking-tighter">Top Performers</h3>
                  <p className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mt-1.5">Elite Agents Ranking</p>
               </div>
-              <button className="text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors">
+              <button 
+                onClick={() => handleNavigate('/customers')}
+                className="text-[9px] font-black text-slate-300 uppercase tracking-widest hover:text-primary transition-colors"
+              >
                  Lihat Semua
               </button>
            </div>
-           <AgentLeaderboard agents={topAgents} />
+           <AgentLeaderboard agents={topAgents} onNavigate={handleNavigate} />
         </section>
 
         {/* Quick Action Center */}
         <section className="grid grid-cols-2 gap-5">
-           <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-premium flex flex-col items-center gap-6 group hover:border-primary/20 transition-all cursor-pointer">
+           <div 
+             onClick={() => handleNavigate('/cashier')}
+             className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-premium flex flex-col items-center gap-6 group hover:border-primary/20 transition-all cursor-pointer"
+            >
               <div className="w-16 h-16 rounded-[1.75rem] bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
                  <ShoppingCart className="w-7 h-7" />
               </div>
@@ -508,7 +440,10 @@ export default function DashboardClient({ stats }: { stats: any }) {
                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Buat Nota Baru</p>
               </div>
            </div>
-           <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-premium flex flex-col items-center gap-6 group hover:border-blue-500/20 transition-all cursor-pointer">
+           <div 
+             onClick={() => handleNavigate('/inventory')}
+             className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-premium flex flex-col items-center gap-6 group hover:border-blue-500/20 transition-all cursor-pointer"
+           >
               <div className="w-16 h-16 rounded-[1.75rem] bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
                  <Package className="w-7 h-7" />
               </div>
@@ -520,7 +455,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
         </section>
 
         {/* Premium Achievement Card */}
-        <section className="relative overflow-hidden p-12 rounded-[4.5rem] bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white shadow-2xl">
+        <section className="relative overflow-hidden p-12 rounded-[4.5rem] bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white shadow-2xl group">
            <div className="relative z-10 space-y-8">
               <div className="flex justify-between items-start">
                  <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
@@ -537,7 +472,10 @@ export default function DashboardClient({ stats }: { stats: any }) {
                     Anda telah mencapai level tertinggi dalam pengelolaan distribusi agen pekan ini.
                  </p>
               </div>
-              <button className="w-full py-5 rounded-[2.5rem] bg-white text-black text-[10px] font-[1000] uppercase tracking-[0.3em] hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
+              <button 
+                onClick={() => alert('Executive Reward Claimed! System processing...')}
+                className="w-full py-5 rounded-[2.5rem] bg-white text-black text-[10px] font-[1000] uppercase tracking-[0.3em] hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95"
+              >
                  Claim Executive Reward
               </button>
            </div>
@@ -548,7 +486,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
            </div>
         </section>
 
-        {/* System Logs & Footer */}
+        {/* Footer Note */}
         <footer className="pt-10 pb-40 text-center space-y-6">
            <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-100 shadow-sm">
@@ -559,13 +497,6 @@ export default function DashboardClient({ stats }: { stats: any }) {
                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Developed by Hayati Terminal</p>
                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">© 2026 Hayati Agency Network. All Rights Reserved.</p>
               </div>
-           </div>
-           <div className="flex items-center justify-center gap-6 pt-6 opacity-20">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-              <div className="w-2 h-2 rounded-full bg-slate-900" />
-              <div className="w-3 h-3 rounded-full bg-primary" />
-              <div className="w-2 h-2 rounded-full bg-slate-900" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
            </div>
         </footer>
 
